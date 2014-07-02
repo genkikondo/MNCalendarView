@@ -40,6 +40,10 @@
 - (void)removeColorForDate:(NSDate *)date;
 - (void)removeColorsForAllDates;
 
+- (void)addText:(NSString *)text forDate:(NSDate *)date;
+- (void)removeTextForDate:(NSDate *)date;
+- (void)removetextForAllDates;
+
 @end
 
 @protocol MNCalendarViewDelegate <NSObject>
