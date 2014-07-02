@@ -15,7 +15,7 @@ NSString *const MNCalendarViewWeekdayCellIdentifier = @"MNCalendarViewWeekdayCel
 
 - (id)initWithFrame:(CGRect)frame {
   if (self = [super initWithFrame:frame]) {
-    self.titleLabel.font = [UIFont systemFontOfSize:12.f];
+    self.titleLabel.font = [UIFont fontWithName:@"AvenirNext-Medium" size:12.f];
     self.enabled = NO;
     
   }
