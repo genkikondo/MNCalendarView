@@ -25,6 +25,8 @@
 
 @property(nonatomic,strong,readwrite) NSDateFormatter *monthFormatter;
 
+@property(nonatomic,strong) NSMutableDictionary *dateToColor;
+
 - (NSDate *)firstVisibleDateOfMonth:(NSDate *)date;
 - (NSDate *)lastVisibleDateOfMonth:(NSDate *)date;
 
@@ -46,7 +48,9 @@
   self.headerViewClass  = MNCalendarHeaderView.class;
   self.weekdayCellClass = MNCalendarViewWeekdayCell.class;
   self.dayCellClass     = MNCalendarViewDayCell.class;
-  
+
+  self.dateToColor = [[NSMutableDictionary alloc] init];
+
   _separatorColor = [UIColor colorWithRed:.85f green:.85f blue:.85f alpha:1.f];
   
   [self addSubview:self.collectionView];
@@ -266,6 +270,11 @@
     [cell setEnabled:[self dateEnabled:date]];
   }
 
+  UIColor *color = [self.dateToColor objectForKey:date];
+  if (color && cell.enabled) {
+    cell.backgroundColor = color;
+  }
+
   if (self.selectedDate && cell.enabled) {
     [cell setSelected:[date isEqualToDate:self.selectedDate]];
   }
@@ -314,6 +323,18 @@
   }
   
   return CGSizeMake(itemWidth, itemHeight);
+}
+
+- (void)addColor:(UIColor *)color forDate:(NSDate *)date {
+  [self.dateToColor setObject:color forKey:[date mn_beginningOfDay:self.calendar]];
+}
+
+- (void)removeColorForDate:(NSDate *)date {
+  [self.dateToColor removeObjectForKey:[date mn_beginningOfDay:self.calendar]];
+}
+
+- (void)removeColorsForAllDates {
+  [self.dateToColor removeAllObjects];
 }
 
 @end

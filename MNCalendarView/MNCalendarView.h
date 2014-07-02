@@ -34,7 +34,11 @@
 @property(nonatomic,strong) Class dayCellClass;
 
 - (void)reloadData;
-- (void)registerUICollectionViewClasses; 
+- (void)registerUICollectionViewClasses;
+
+- (void)addColor:(UIColor *)color forDate:(NSDate *)date;
+- (void)removeColorForDate:(NSDate *)date;
+- (void)removeColorsForAllDates;
 
 @end
 
