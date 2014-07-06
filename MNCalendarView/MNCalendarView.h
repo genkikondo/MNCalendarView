@@ -36,13 +36,15 @@
 - (void)reloadData;
 - (void)registerUICollectionViewClasses;
 
+- (void)scrollToMonthForDate:(NSDate *)date animated:(BOOL)animated;
+
 - (void)addColor:(UIColor *)color forDate:(NSDate *)date;
 - (void)removeColorForDate:(NSDate *)date;
 - (void)removeColorsForAllDates;
 
 - (void)addText:(NSString *)text forDate:(NSDate *)date;
 - (void)removeTextForDate:(NSDate *)date;
-- (void)removetextForAllDates;
+- (void)removeTextForAllDates;
 
 @end
 

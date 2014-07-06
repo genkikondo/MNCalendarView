@@ -40,6 +40,8 @@
 
 @implementation MNCalendarView
 
+static const int kTagForCellTextLabel = 1;
+
 - (void)commonInit {
   self.calendar   = NSCalendar.currentCalendar;
   self.fromDate   = [NSDate.date mn_beginningOfDay:self.calendar];
@@ -203,6 +205,42 @@
   return enabled;
 }
 
+- (NSIndexPath *)indexPathForDate:(NSDate *)date {
+  if (!date || [date compare:_fromDate] == NSOrderedAscending || [date compare:_toDate] == NSOrderedDescending) {
+    return nil;
+  }
+
+  unsigned units = NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit|NSWeekdayCalendarUnit;
+
+  NSDateComponents *fromDateComp = [self.calendar components:units fromDate:_fromDate];
+  NSDateComponents *toDateComp   = [self.calendar components:units fromDate:date];
+
+  NSInteger yearDiff  = toDateComp.year - fromDateComp.year;
+  NSInteger monthDiff = toDateComp.month - fromDateComp.month;
+  NSInteger monthDay  = toDateComp.day;
+
+  [toDateComp setDay:1];
+  toDateComp = [self.calendar components:units fromDate:[self.calendar dateFromComponents:toDateComp]];
+
+  NSInteger section = (yearDiff * 12) + monthDiff;
+  NSInteger row = self.daysInWeek + [toDateComp weekday] + monthDay - 2;
+
+  return [NSIndexPath indexPathForItem:row inSection:section];
+}
+
+- (void)scrollToMonthForDate:(NSDate *)date animated:(BOOL)animated {
+  NSIndexPath *indexPath = [self indexPathForDate:date];
+  if (!indexPath) {
+    return;
+  }
+
+  CGFloat offsetY = [self.collectionView layoutAttributesForSupplementaryElementOfKind:UICollectionElementKindSectionHeader atIndexPath:indexPath].frame.origin.y;
+
+  [self.collectionView setContentOffset:CGPointMake(self.collectionView.contentOffset.x,
+                                                    offsetY - self.collectionView.contentInset.top)
+                               animated:animated];
+}
+
 #pragma mark - UICollectionViewDataSource
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
@@ -251,6 +289,12 @@
   MNCalendarViewDayCell *cell =
   [collectionView dequeueReusableCellWithReuseIdentifier:MNCalendarViewDayCellIdentifier
                                             forIndexPath:indexPath];
+
+  // Eliminiate persistent labels on cell reuse
+  UILabel *foundLabel = (UILabel* )[cell viewWithTag:kTagForCellTextLabel];
+  if (foundLabel) {
+    [foundLabel removeFromSuperview];
+  }
   cell.separatorColor = self.separatorColor;
 
   NSDate *monthDate = self.monthDates[indexPath.section];
@@ -283,6 +327,7 @@
                                                                    cell.frame.size.height * 2 / 3,
                                                                    cell.frame.size.width,
                                                                    cell.frame.size.height / 3)];
+    textLabel.tag = kTagForCellTextLabel;
     textLabel.font = [UIFont fontWithName:@"AvenirNext-Medium" size:10.f];
     textLabel.textAlignment = NSTextAlignmentCenter;
     textLabel.text = text;
@@ -311,8 +356,8 @@
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-  MNCalendarViewCell *cell = (MNCalendarViewCell *)[self collectionView:collectionView cellForItemAtIndexPath:indexPath];
-
+  MNCalendarViewCell *cell = (MNCalendarViewCell *)[self collectionView:collectionView
+                                                 cellForItemAtIndexPath:indexPath];
   if ([cell isKindOfClass:MNCalendarViewDayCell.class] && cell.enabled) {
     MNCalendarViewDayCell *dayCell = (MNCalendarViewDayCell *)cell;
 
@@ -343,6 +388,8 @@
   return CGSizeMake(itemWidth, itemHeight);
 }
 
+#pragma mark - Customization
+
 - (void)addColor:(UIColor *)color forDate:(NSDate *)date {
   [self.colorsForDates setObject:color forKey:[date mn_beginningOfDay:self.calendar]];
 }
@@ -363,7 +410,7 @@
   [self.textForDates removeObjectForKey:[date mn_beginningOfDay:self.calendar]];
 }
 
-- (void)removetextForAllDates {
+- (void)removeTextForAllDates {
   [self.textForDates removeAllObjects];
 }
 
