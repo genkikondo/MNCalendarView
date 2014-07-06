@@ -338,6 +338,7 @@ static const int kTagForCellTextLabel = 1;
     textLabel.text = text;
     [cell addSubview:textLabel];
 
+    textLabel.textColor = cell.enabled ? UIColor.darkTextColor : UIColor.lightGrayColor;
     if ([date isEqualToDate:self.selectedDate] && cell.enabled) {
       textLabel.textColor = [UIColor whiteColor];
     }
