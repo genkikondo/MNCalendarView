@@ -55,7 +55,8 @@ static const int kTagForCellTextLabel = 1;
   self.colorsForDates = [[NSMutableDictionary alloc] init];
   self.textForDates = [[NSMutableDictionary alloc] init];
 
-  _separatorColor = [UIColor colorWithRed:.85f green:.85f blue:.85f alpha:1.f];
+  self.separatorColor = [UIColor colorWithRed:.85f green:.85f blue:.85f alpha:1.f];
+  self.selectedColor = [UIColor orangeColor];
 
   [self addSubview:self.collectionView];
   [self applyConstraints];
@@ -296,6 +297,10 @@ static const int kTagForCellTextLabel = 1;
     [foundLabel removeFromSuperview];
   }
   cell.separatorColor = self.separatorColor;
+
+  UIView *selected = [[UIView alloc] init];
+  selected.backgroundColor = self.selectedColor;
+  cell.selectedBackgroundView = selected;
 
   NSDate *monthDate = self.monthDates[indexPath.section];
   NSDate *firstDateInMonth = [self firstVisibleDateOfMonth:monthDate];
