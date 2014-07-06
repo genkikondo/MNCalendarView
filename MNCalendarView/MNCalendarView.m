@@ -283,7 +283,7 @@
                                                                    cell.frame.size.height * 2 / 3,
                                                                    cell.frame.size.width,
                                                                    cell.frame.size.height / 3)];
-    textLabel.font = [UIFont fontWithName:@"AvenirNext-Medium" size:12.f];
+    textLabel.font = [UIFont fontWithName:@"AvenirNext-Medium" size:10.f];
     textLabel.textAlignment = NSTextAlignmentCenter;
     textLabel.text = text;
     [cell addSubview:textLabel];
